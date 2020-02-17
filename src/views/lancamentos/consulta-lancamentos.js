@@ -1,14 +1,18 @@
 import React from 'react'
 import { withRouter } from 'react-router-dom'
+
 import Card from '../../components/card'
 import FormGroup from '../../components/form-group'
 import SelectMenu from '../../components/selectMenu'
 import LancamentosTable from './lancamentosTable'
-
 import LancamentoService from '../../app/service/lancamentoService'
 import LocalStorageService from '../../app/service/localstorageService'
 
 import * as messages from '../../components/toastr' // importar tudo que esta dentro do toastr com o nome messages
+
+import {Dialog} from 'primereact/dialog';
+import {Button} from 'primereact/button';
+
 
 class ConsultaLancamentos extends React.Component {
 
@@ -17,6 +21,8 @@ class ConsultaLancamentos extends React.Component {
         mes: '',
         tipo: '',
         descricao: '',
+        showConfirmDialog: false,
+        lancamentoDeletar: {},
         lancamentos : []
     }
 
@@ -54,16 +60,24 @@ class ConsultaLancamentos extends React.Component {
         console.log('Editando o lancamento', id)
     }
 
-    deletar = ( lancamento ) => {
+    abrirConfirmacao = (lancamento) => {
+        this.setState({ showConfirmDialog : true, lancamentoDeletar: lancamento })
+    }
+
+    cancelarDelecao = () => {
+        this.setState({ showConfirmDialog : false, lancamentoDeletar: {} })
+    }
+
+    deletar = () => {
         // console.log('Deletando o lancamento', id)
         this.service
-            .deletar(lancamento.id)
+            .deletar(this.state.lancamentoDeletar.id)
             .then(response => {
                 // remover do array
                 const lancamentos = this.state.lancamentos; // capturar lancamentos na constante
-                const index = lancamentos.indexOf(lancamento) // descobrir qual item do lancamento que eu quero deletar
+                const index = lancamentos.indexOf(this.state.lancamentoDeletar) // descobrir qual item do lancamento que eu quero deletar
                 lancamentos.splice(index, 1); // Esse método recebe os parametros 
-                this.setState(lancamentos) // atualizar a variável lançamentos
+                this.setState( { lancamentos: lancamentos, showConfirmDialog: false } ) // atualizar a variável lançamentos e fechar o dialog
 
                 messages.mensagemSucesso('Lançamento excluído com sucesso!')
             }).catch(error => {
@@ -74,6 +88,14 @@ class ConsultaLancamentos extends React.Component {
     render(){
         const meses = this.service.obterListaMeses();
         const tipos = this.service.obterListaTipos();
+
+        const confirmDialogFooter = (
+            <div>
+                <Button label="Confirmar" icon="pi pi-check" onClick={this.deletar} />
+                <Button label="Cancelar" icon="pi pi-times" onClick={this.cancelarDelecao} 
+                        className="p-button-secondary" />
+            </div>
+        );
 
         return (
             <Card title="Consulta Lançamentos">
@@ -126,11 +148,21 @@ class ConsultaLancamentos extends React.Component {
                     <div className="col-md-12">
                         <div className="bs-component">
                             <LancamentosTable lancamentos={this.state.lancamentos} 
-                                              deleteAction={this.deletar}
+                                              deleteAction={this.abrirConfirmacao}
                                               editAction={this.editar} />
                         </div>
                     </div>  
-                </div>            
+                </div>     
+                <div>
+                    <Dialog header="Confirmação" 
+                            visible={this.state.showConfirmDialog} 
+                            style={{width: '50vw'}} 
+                            footer={confirmDialogFooter}
+                            modal={true} 
+                            onHide={() => this.setState({showConfirmDialog: false})}>
+                        Confirma a exclusão deste Lançamento?
+                    </Dialog>
+                </div>       
             </Card>
         )
     }
