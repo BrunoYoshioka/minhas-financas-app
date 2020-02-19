@@ -1,7 +1,7 @@
 import React from 'react'
 
 import UsuarioSerice from '../app/service/usuarioService'
-import LocalStorageService from '../app/service/localstorageService'
+import { AuthContext } from '../main/provedorAutenticacao'
 
 class Home extends React.Component{
 
@@ -15,7 +15,7 @@ class Home extends React.Component{
     }
 
     componentDidMount(){
-        const usuarioLogado = LocalStorageService.obterItem('_usuario_logado') // recuperar usuário logado
+        const usuarioLogado = this.context.usuarioAutenticado // recuperar usuário logado
 
         // axios.get(`http://localhost:8080/api/usuarios/${usuarioLogado.id}/saldo`) //template string ( recurso da axios)
         this.usuarioSerice
@@ -38,12 +38,12 @@ class Home extends React.Component{
                 <p className="lead">
                     <a className="btn btn-primary btn-lg" 
                     href="#/cadastro-usuarios" 
-                    role="button"><i className="fa fa-users"></i>  
+                    role="button"><i className="pi pi-users"></i>  
                     Cadastrar Usuário
                     </a>
                     <a className="btn btn-danger btn-lg" 
                     href="#/cadastro-lancamentos" 
-                    role="button"><i className="fa fa-users"></i>  
+                    role="button"><i className="pi pi-money-bill"></i>  
                     Cadastrar Lançamento
                     </a>
                 </p>
@@ -51,5 +51,7 @@ class Home extends React.Component{
         )
     }
 }
+
+Home.contextType = AuthContext;
 
 export default Home
