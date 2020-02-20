@@ -4,7 +4,6 @@ import FormGroup from '../components/form-group'
 import { withRouter } from 'react-router-dom'
 
 import UsuarioService from '../app/service/usuarioService'
-import LocalStorageService from '../app/service/localstorageService'
 import { mensagemErro } from '../components/toastr'
 import { AuthContext } from '../main/provedorAutenticacao'
 
