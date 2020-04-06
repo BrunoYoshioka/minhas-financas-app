@@ -2,7 +2,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Available Scripts
 
-In the project directory, you can run:
+
+Note: This front-end application depends on the execution of the API (Application Programming Interface) available at [https://github.com/BrunoYoshioka/minhasfinancas-api](https://github.com/BrunoYoshioka/minhasfinancas-api)<br />
+
+In the project directory, you can run it via console:
 
 ### `yarn start`
 
